@@ -8,7 +8,6 @@ import {
   Dimensions,
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import * as FileSystem from "expo-file-system";
 
 const { width } = Dimensions.get("screen");
 
@@ -18,21 +17,6 @@ const fetchImagesFromFlickr = async () => {
   const data = await fetch(API_URL);
   const results = await data.json();
   return results;
-};
-
-const cacheImages = (images) => {
-  var downloadedImages = [""];
-  for (const [key, value] of Object.entries(images)) {
-    FileSystem.downloadAsync(
-      value.url_s,
-      FileSystem.documentDirectory + value.id + ".jpg"
-    )
-      .then(({ uri }) => downloadedImages.push(uri))
-      .catch((error) => {
-        console.error(error);
-      });
-  }
-  return downloadedImages;
 };
 
 const storeLinks = async (image) => {
@@ -72,9 +56,6 @@ export const HomeScreen = ({ navigation }) => {
   if (!images) {
     return <Text>Loading...</Text>;
   }
-
-  const downloadedImages = cacheImages(images);
-  console.log(downloadedImages);
 
   return (
     <View style={styles.container}>
